@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
@@ -72,6 +73,11 @@ class Handler extends ExceptionHandler
         if ($exception instanceof ValidationException) {
             $errors = $exception->validator->errors()->getMessages();
             return $this->errorResponse($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        if ($exception instanceof  QueryException) {
+            $errors = "Some Query Errors Or Connectons";
+            return $this->errorResponse($errors, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         if (env('APP_DEBUG', false)) {
